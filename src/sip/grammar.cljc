@@ -222,17 +222,26 @@
   ([s i stop-chars]
    (let [n (count s)
          value-stop (conj stop-chars \;)]
-     (loop [j i params (transient {})]
-       (if (or (>= j n) (contains? stop-chars (ch s j)) (not= (ch s j) \;))
-         (persistent! params)
-         (let [j (skip-lws s (inc j))
-               [name j2] (read-token s j)]
-           (if (empty? name)
-             (persistent! params)
-             (if (and (< j2 n) (= (ch s j2) \=))
-               (let [[val j3] (read-param-value s (inc j2) value-stop)]
-                 (recur j3 (assoc! params (str/lower-case name) val)))
-               (recur j2 (assoc! params (str/lower-case name) true))))))))))
+     (loop [j0 i params (transient {})]
+       ;; RFC 3261 25.1: `SEMI = SWS ";" SWS`, so whitespace is allowed on
+       ;; BOTH sides. Skipping it only after the `;` made
+       ;; `<sip:a@b> ;tag=x` -- which is valid SIP, and what an unfolded
+       ;; continuation line produces -- decode with no parameters at all,
+       ;; silently losing the To/From tag a dialog is identified by.
+       (let [j (skip-lws s j0)]
+         (if (or (>= j n) (contains? stop-chars (ch s j)) (not= (ch s j) \;))
+           (persistent! params)
+           (let [j (skip-lws s (inc j))
+                 [name j2] (read-token s j)]
+             (if (empty? name)
+               (persistent! params)
+               (if (and (< j2 n) (= (ch s j2) \=))
+                 (let [[val j3] (read-param-value s (inc j2) value-stop)]
+                   ;; and the trailing half of the next SEMI is not part of
+                   ;; this value: `;tag=x ;q=1` has tag "x", not "x ".
+                   (recur j3 (assoc! params (str/lower-case name)
+                                     (if (string? val) (str/trimr val) val))))
+                 (recur j2 (assoc! params (str/lower-case name) true)))))))))))
 
 (defn encode-params
   "Inverse of `parse-params-tail`: `{name value}` -> `;name=value` pairs,

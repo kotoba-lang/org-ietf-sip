@@ -139,3 +139,18 @@
 (deftest discriminates-quote-errors-from-success
   (is (not= (g/read-quoted-string "\"ok\"" 0)
             (g/read-quoted-string "\"unterminated" 0))))
+
+(deftest semi-allows-whitespace-on-both-sides
+  (testing "RFC 3261 25.1: `SEMI = SWS \";\" SWS`. Skipping whitespace only
+            AFTER the semicolon made a valid header decode with no
+            parameters at all -- and an unfolded continuation line (7.3.1)
+            produces exactly that shape, so a To/From tag arriving on a
+            folded line was silently lost."
+    (is (= {"tag" "1928301774"} (g/parse-params-tail " ;tag=1928301774" 0)))
+    (is (= {"tag" "1928301774"} (g/parse-params-tail "\t;tag=1928301774" 0)))
+    (is (= {"tag" "1928301774"} (g/parse-params-tail ";tag=1928301774" 0))))
+  (testing "and the whitespace before the NEXT semicolon is not part of the
+            value: `;tag=x ;q=1` has tag \"x\", not \"x \""
+    (is (= {"tag" "x" "q" "1"} (g/parse-params-tail ";tag=x ;q=1" 0))))
+  (testing "a quoted value keeps its own spaces"
+    (is (= {"note" "a b"} (g/parse-params-tail ";note=\"a b\"" 0)))))
