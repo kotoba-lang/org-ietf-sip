@@ -22,7 +22,7 @@
   (which understands `<...>` and quoted strings, not `[...]`) — a
   literal `:` inside `[...]` is part of the address, not the host/port
   separator."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [sip.grammar :as g]))
 
 (def schemes #{"sip" "sips" "tel"})
@@ -151,7 +151,7 @@
   (let [colon (str/index-of s ":")]
     (if (nil? colon)
       [:error :sip/unknown-uri-scheme]
-      (let [scheme (str/lower-case (subs s 0 colon))
+      (let [scheme (str/lower (subs s 0 colon))
             rest-s (subs s (inc colon))]
         (cond
           (contains? #{"sip" "sips"} scheme) (parse-sip-like scheme rest-s)

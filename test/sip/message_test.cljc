@@ -1,6 +1,6 @@
 (ns sip.message-test
   (:require [clojure.test :refer [deftest testing is]]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [sip.message :as m]))
 
 (defn- crlf [& lines] (str (str/join "\r\n" lines) "\r\n\r\n"))
