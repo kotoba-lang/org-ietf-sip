@@ -6,14 +6,14 @@
   confused by commas hiding inside a quoted string or an angle-bracket
   URI.
 
-  The classic wrong way to parse any of this is `(clojure.string/split s
+  The classic wrong way to parse any of this is `(str/split s
   #\";\")` or `#\",\")` — which is exactly wrong the moment a quoted
   `Reason` string contains a comma (`Reason: SIP;cause=200;text=\"Call
   completed, thanks\"` is a real, legal header value) or a `tel:` URI's
   own parameters sit inside `<...>` next to a header-level `;tag=`. Every
   splitter here is a real scanner that tracks quote/bracket state, not a
   regex split."
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 ;; ---------------------------------------------------------------------
 ;; token grammar (RFC 3261 §25.1)
@@ -239,9 +239,9 @@
                  (let [[val j3] (read-param-value s (inc j2) value-stop)]
                    ;; and the trailing half of the next SEMI is not part of
                    ;; this value: `;tag=x ;q=1` has tag "x", not "x ".
-                   (recur j3 (assoc! params (str/lower-case name)
+                   (recur j3 (assoc! params (str/lower name)
                                      (if (string? val) (str/trimr val) val))))
-                 (recur j2 (assoc! params (str/lower-case name) true)))))))))))
+                 (recur j2 (assoc! params (str/lower name) true)))))))))))
 
 (defn encode-params
   "Inverse of `parse-params-tail`: `{name value}` -> `;name=value` pairs,

@@ -9,7 +9,7 @@
   point of structuring these particular headers is that routing logic
   needs `Via`'s `branch`, `To`/`From`'s tags, and `CSeq`'s method/number
   as actual values, not substrings a caller has to re-parse."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [sip.grammar :as g]
             [sip.uri :as uri]))
 
@@ -51,7 +51,7 @@
    "reply-to" "Reply-To" "timestamp" "Timestamp"})
 
 (defn- title-case-word [w]
-  (if (empty? w) w (str (str/upper-case (subs w 0 1)) (subs w 1))))
+  (if (empty? w) w (str (str/upper (subs w 0 1)) (subs w 1))))
 
 (defn display-name-for
   "The wire-casing to emit for a canonical (lower-case, full-form) header
@@ -70,7 +70,7 @@
   `CONTENT-LENGTH` all name the same header), so every lookup in this
   library goes through this function first."
   [raw-name]
-  (let [lower (str/lower-case raw-name)]
+  (let [lower (str/lower raw-name)]
     (get compact->full lower lower)))
 
 ;; ---------------------------------------------------------------------
@@ -113,13 +113,13 @@
               (let [[host port] hp
                     params (g/parse-params-tail s hp-end)]
                 {:protocol-name pname :protocol-version pver
-                 :transport (str/upper-case ptransport)
+                 :transport (str/upper ptransport)
                  :host host :port port :params params}))))))))
 
 (defn encode-via
   [{:keys [protocol-name protocol-version transport host port params]
     :or {protocol-name "SIP" protocol-version "2.0"}}]
-  (str protocol-name "/" protocol-version "/" (str/upper-case transport) " "
+  (str protocol-name "/" protocol-version "/" (str/upper transport) " "
        host (when port (str ":" port))
        (g/encode-params params)))
 

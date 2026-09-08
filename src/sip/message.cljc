@@ -20,7 +20,7 @@
   by starting each continuation with SP/HTAB) is unfolded before any
   header value is parsed, and quoted strings, `;parameter` grammars and
   Via's `sent-by` are handled by real scanners in `sip.grammar`/
-  `sip.uri`/`sip.headers`, not `clojure.string/split`.
+  `sip.uri`/`sip.headers`, not `str/split`.
 
   **Round-trip contract**: `decode`/`encode` assert *semantic* equality
   (the decoded header/URI/body values match), not byte-exact
@@ -33,7 +33,7 @@
   semantically load-bearing for Via — RFC 3261 §18.1.1) and always
   recomputes `Content-Length` from the actual body rather than trusting
   whatever was declared coming in, the same way a real UA does."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [sip.grammar :as g]
             [sip.headers :as h]
             [sip.uri :as uri]))

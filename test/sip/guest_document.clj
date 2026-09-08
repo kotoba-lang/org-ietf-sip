@@ -6,7 +6,7 @@
   The same helper as `org-ietf-pop3` and `org-ietf-imap` carry. It is test
   scaffolding for a runtime encoding, not a second implementation of
   anything -- there is no product semantics here to drift."
-  (:require [clojure.string]))
+  (:require [kotoba.lang.text]))
 
 (defn ->doc
   "Encode `x`. Map keys must be keywords; nil values are dropped."
