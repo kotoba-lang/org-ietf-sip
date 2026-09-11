@@ -53,7 +53,7 @@ prevent. Both `Content-Length` values are the true UTF-8 byte counts of the
 constructed bodies.
 
 Everything else is round-trip and structural negative testing: 86 tests, 319
-assertions, green on both JVM (`clojure -M:test`) and ClojureScript.
+assertions, green on both JVM (`kbb -M:test`) and ClojureScript.
 
 ## Use
 
