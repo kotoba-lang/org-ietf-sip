@@ -1,5 +1,5 @@
 (ns sip.uri-test
-  (:require [clojure.test :refer [deftest testing is]]
+  (:require [kotoba.test :refer [deftest testing is]]
             [sip.uri :as u]))
 
 ;; ---------------------------------------------------------------------
