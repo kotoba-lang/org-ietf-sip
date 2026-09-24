@@ -1,5 +1,5 @@
 (ns sip.grammar-test
-  (:require [clojure.test :refer [deftest testing is]]
+  (:require [kotoba.test :refer [deftest testing is]]
             [sip.grammar :as g]))
 
 (deftest read-token-basic
