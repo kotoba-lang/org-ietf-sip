@@ -41,7 +41,7 @@
 ;;   * `reader-carries-no-body-bytes` — the passthrough design claim.
 
 (ns sip.reader-kotoba-parity-test
-  (:require [clojure.java.io :as io]
+  (:require [kotoba.io :as io]
             [kotoba.lang.text :as str]
             [kotoba.test :refer [deftest is testing]]
             [kotoba.compiler.core :as compiler]
@@ -162,7 +162,7 @@
 ;; --- the tests -------------------------------------------------------------
 
 (deftest guest-source-is-present
-  (is (.exists guest-file) (str "kotoba object not found at " guest-file)))
+  (is (io/exists? guest-file) (str "kotoba object not found at " guest-file)))
 
 (deftest an-invite-reads-the-same-identity-as-the-oracle
   (let [guest (guest-read (lines-of invite))
